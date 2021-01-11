@@ -1,0 +1,11 @@
+.DS_Store
+.git
+.gitignore
+.postgres
+
+Dockerfile
+docker-compose.yml
+
+*.xlsx
+
+avito_mx
