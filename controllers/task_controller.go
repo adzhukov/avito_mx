@@ -26,12 +26,26 @@ func NewTask(ctx context.Context, seller int64, file string) (int64, error) {
 func GetTaskByID(ctx context.Context, id int64) (*models.Task, error) {
 	row := config.DB.QueryRow(ctx, "SELECT * from tasks where task_id=$1", id)
 	var task models.Task
-	task.Stats = new(models.TaskStats)
+	var taskError *string
+	var created, updated, deleted, invalid *int
 
-	err := row.Scan(&task.TaskID, &task.SellerID, &task.FileURL, &task.Status,
-		&task.Stats.Created, &task.Stats.Updated, &task.Stats.Deleted, &task.Stats.Invalid)
+	err := row.Scan(&task.TaskID, &task.SellerID, &task.FileURL, &task.Status, &taskError,
+		&created, &updated, &deleted, &invalid)
 	if err != nil {
 		return nil, err
+	}
+
+	if taskError != nil {
+		task.Error = *taskError
+	}
+
+	if task.Status == models.TaskSuccess {
+		task.Stats = &models.TaskStats{
+			Created: *created,
+			Updated: *updated,
+			Deleted: *deleted,
+			Invalid: *invalid,
+		}
 	}
 
 	return &task, nil
