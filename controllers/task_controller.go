@@ -24,7 +24,12 @@ func NewTask(ctx context.Context, seller int64, file string) (int64, error) {
 }
 
 func GetTaskByID(ctx context.Context, id int64) (*models.Task, error) {
-	row := config.DB.QueryRow(ctx, "SELECT * from tasks where task_id=$1", id)
+	row := config.DB.QueryRow(ctx,
+		`SELECT task_id, seller_id, file_url, status, error,
+		created, updated, deleted, invalid
+		  FROM tasks
+		  WHERE task_id=$1`, id)
+
 	var task models.Task
 	var taskError *string
 	var created, updated, deleted, invalid *int
