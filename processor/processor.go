@@ -8,7 +8,6 @@ import (
 )
 
 type Processor struct {
-	tasks        map[int64]models.Task
 	queue        chan models.Task
 	workersCount int
 	wg           *sync.WaitGroup
@@ -16,7 +15,6 @@ type Processor struct {
 
 func New() *Processor {
 	p := Processor{
-		tasks:        make(map[int64]models.Task),
 		queue:        make(chan models.Task, 100),
 		workersCount: runtime.NumCPU() * 2,
 		wg:           &sync.WaitGroup{},
