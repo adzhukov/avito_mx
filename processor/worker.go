@@ -20,7 +20,7 @@ import (
 type parsedXlsx struct {
 	Invalid   int
 	Available []models.Offer
-	Deleted   []int64
+	Deleted   []int
 }
 
 const taskTimeout = 30
@@ -128,7 +128,7 @@ func parseTask(task *models.Task) (*parsedXlsx, error) {
 
 func parseSheet(sheet *xlsx.Sheet, parsed *parsedXlsx) {
 	sheet.ForEachRow(func(row *xlsx.Row) error {
-		offerID, err := row.GetCell(offerIDColumn).Int64()
+		offerID, err := row.GetCell(offerIDColumn).Int()
 		if err != nil {
 			parsed.Invalid++
 			return nil
@@ -140,7 +140,7 @@ func parseSheet(sheet *xlsx.Sheet, parsed *parsedXlsx) {
 			return nil
 		}
 
-		quantity, err := row.GetCell(quantityColumn).Int64()
+		quantity, err := row.GetCell(quantityColumn).Int()
 		if err != nil || quantity < 0 {
 			parsed.Invalid++
 			return nil
@@ -151,7 +151,7 @@ func parseSheet(sheet *xlsx.Sheet, parsed *parsedXlsx) {
 			return nil
 		}
 
-		price, err := row.GetCell(priceColumn).Int64()
+		price, err := row.GetCell(priceColumn).Int()
 		if err != nil || price < 0 {
 			parsed.Invalid++
 			return nil
