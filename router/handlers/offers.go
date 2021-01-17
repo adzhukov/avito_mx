@@ -5,6 +5,7 @@ import (
 	"avito_mx/models"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -17,13 +18,23 @@ func OffersHandler(w http.ResponseWriter, r *http.Request) {
 
 	seller := urlQuery.Get("seller_id")
 	if seller != "" {
-		filterValues = append(filterValues, seller)
+		sellerID, err := strconv.ParseInt(seller, 10, 64)
+		if err != nil {
+			responseJSON(w, respError{"parameter seller_id is not valid integer"}, http.StatusBadRequest)
+			return
+		}
+		filterValues = append(filterValues, sellerID)
 		filtersQuery = append(filtersQuery, fmt.Sprintf("seller_id = $%d", len(filterValues)))
 	}
 
 	offer := urlQuery.Get("offer_id")
 	if offer != "" {
-		filterValues = append(filterValues, offer)
+		offerID, err := strconv.ParseInt(offer, 10, 64)
+		if err != nil {
+			responseJSON(w, respError{"parameter offer_id is not valid integer"}, http.StatusBadRequest)
+			return
+		}
+		filterValues = append(filterValues, offerID)
 		filtersQuery = append(filtersQuery, fmt.Sprintf("offer_id = $%d", len(filterValues)))
 	}
 
